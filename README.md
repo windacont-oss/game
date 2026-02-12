@@ -15,6 +15,8 @@
 
 ## Быстрый старт
 
+Подробная инструкция по запуску: `docs/RUN_GUIDE_RU.md`.
+
 ```bash
 bash tools/bootstrap_source_mod.sh neo_city17
 ```
