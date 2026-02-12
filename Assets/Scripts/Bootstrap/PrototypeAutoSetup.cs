@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ImbaLife.Core;
 using ImbaLife.Gameplay;
+using ImbaLife.UI;
 using UnityEngine;
 
 namespace ImbaLife.Bootstrap
@@ -19,13 +20,16 @@ namespace ImbaLife.Bootstrap
         {
             EnsureGameState();
             TaskBoard taskBoard = EnsureTaskBoard();
-            EnsurePlayer(taskBoard);
+            PlayerInteractor interactor = EnsurePlayer(taskBoard);
             EnsureWorld();
+            EnsureSessionController(taskBoard);
+            EnsureOverlay(taskBoard, interactor);
         }
 
         private static void EnsureGameState()
         {
             if (FindObjectOfType<GameState>() != null) return;
+
             GameObject state = new GameObject("GameState");
             state.AddComponent<GameState>();
         }
@@ -48,9 +52,10 @@ namespace ImbaLife.Bootstrap
             return board;
         }
 
-        private static void EnsurePlayer(TaskBoard board)
+        private static PlayerInteractor EnsurePlayer(TaskBoard board)
         {
-            if (FindObjectOfType<PlayerInteractor>() != null) return;
+            PlayerInteractor existing = FindObjectOfType<PlayerInteractor>();
+            if (existing != null) return existing;
 
             GameObject player = new GameObject("Player");
             CharacterController controller = player.AddComponent<CharacterController>();
@@ -68,7 +73,27 @@ namespace ImbaLife.Bootstrap
             PlayerInteractor interactor = player.AddComponent<PlayerInteractor>();
             interactor.Configure(cameraComponent, board);
 
-            player.transform.position = new Vector3(0f, 0f, -3f);
+            player.transform.position = new Vector3(0f, 0.2f, -3f);
+            return interactor;
+        }
+
+        private static void EnsureSessionController(TaskBoard board)
+        {
+            if (FindObjectOfType<PrototypeSessionController>() != null) return;
+
+            GameObject controllerObject = new GameObject("SessionController");
+            PrototypeSessionController session = controllerObject.AddComponent<PrototypeSessionController>();
+            session.Configure(board);
+        }
+
+        private static void EnsureOverlay(TaskBoard board, PlayerInteractor interactor)
+        {
+            if (FindObjectOfType<PrototypeGameOverlay>() != null) return;
+
+            GameObject overlayObj = new GameObject("PrototypeOverlay");
+            PrototypeGameOverlay overlay = overlayObj.AddComponent<PrototypeGameOverlay>();
+            PrototypeSessionController session = FindObjectOfType<PrototypeSessionController>();
+            overlay.Configure(board, session, interactor);
         }
 
         private static void EnsureWorld()
@@ -78,6 +103,13 @@ namespace ImbaLife.Bootstrap
             GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
             floor.name = "DemoFloor";
             floor.transform.position = Vector3.zero;
+            floor.transform.localScale = new Vector3(1.2f, 1f, 1.2f);
+            floor.GetComponent<Renderer>().material.color = new Color(0.18f, 0.18f, 0.2f);
+
+            CreateWall("Wall_N", new Vector3(0f, 1.5f, 6f), new Vector3(12f, 3f, 0.2f));
+            CreateWall("Wall_S", new Vector3(0f, 1.5f, -6f), new Vector3(12f, 3f, 0.2f));
+            CreateWall("Wall_E", new Vector3(6f, 1.5f, 0f), new Vector3(0.2f, 3f, 12f));
+            CreateWall("Wall_W", new Vector3(-6f, 1.5f, 0f), new Vector3(0.2f, 3f, 12f));
 
             CreateTaskCube("TrashBin", new Vector3(-2f, 0.5f, 1f), new Color(0.1f, 0.6f, 0.1f), "take_out_trash");
             CreateTaskCube("Kitchen", new Vector3(2f, 0.5f, 2f), new Color(0.8f, 0.4f, 0.2f), "cook_food");
@@ -94,7 +126,17 @@ namespace ImbaLife.Bootstrap
                 light.type = LightType.Directional;
             }
 
-            light.intensity = 0.8f;
+            light.intensity = 0.75f;
+            RenderSettings.ambientLight = new Color(0.28f, 0.28f, 0.33f);
+        }
+
+        private static void CreateWall(string wallName, Vector3 position, Vector3 scale)
+        {
+            GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.name = wallName;
+            wall.transform.position = position;
+            wall.transform.localScale = scale;
+            wall.GetComponent<Renderer>().material.color = new Color(0.36f, 0.35f, 0.38f);
         }
 
         private static void CreateTaskCube(string name, Vector3 position, Color color, string taskId)
@@ -105,8 +147,7 @@ namespace ImbaLife.Bootstrap
             cube.GetComponent<Renderer>().material.color = color;
 
             InteractableTaskObject interactable = cube.AddComponent<InteractableTaskObject>();
-            interactable.Configure(taskId, 12, "Нажми E");
-
+            interactable.Configure(taskId, 12, "Выполнить задачу");
         }
 
         private static void CreateUtilityCube(
