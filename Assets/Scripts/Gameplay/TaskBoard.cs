@@ -8,7 +8,7 @@ namespace ImbaLife.Gameplay
 {
     public sealed class TaskBoard : MonoBehaviour
     {
-        [SerializeField] private List<HouseTask> dailyTasks = new();
+        [SerializeField] private List<HouseTask> dailyTasks = new List<HouseTask>();
         [SerializeField] private int money;
 
         public IReadOnlyList<HouseTask> Tasks => dailyTasks;
@@ -19,20 +19,21 @@ namespace ImbaLife.Gameplay
 
         private void Start()
         {
-            foreach (HouseTask task in dailyTasks)
-            {
-                task.OnTaskCompleted += HandleTaskCompleted;
-            }
-
+            SubscribeAll();
             OnTasksUpdated?.Invoke();
         }
 
         private void OnDestroy()
         {
-            foreach (HouseTask task in dailyTasks)
-            {
-                task.OnTaskCompleted -= HandleTaskCompleted;
-            }
+            UnsubscribeAll();
+        }
+
+        public void ConfigureTasks(List<HouseTask> tasks)
+        {
+            UnsubscribeAll();
+            dailyTasks = tasks ?? new List<HouseTask>();
+            SubscribeAll();
+            OnTasksUpdated?.Invoke();
         }
 
         public HouseTask GetTaskById(string id)
@@ -55,7 +56,7 @@ namespace ImbaLife.Gameplay
             money += task.RewardMoney;
             OnTasksUpdated?.Invoke();
 
-            if (dailyTasks.All(t => t.IsCompleted))
+            if (dailyTasks.Count > 0 && dailyTasks.All(t => t.IsCompleted))
             {
                 OnAllTasksCompleted?.Invoke();
             }
@@ -81,6 +82,22 @@ namespace ImbaLife.Gameplay
             }
 
             OnTasksUpdated?.Invoke();
+        }
+
+        private void SubscribeAll()
+        {
+            foreach (HouseTask task in dailyTasks)
+            {
+                task.OnTaskCompleted += HandleTaskCompleted;
+            }
+        }
+
+        private void UnsubscribeAll()
+        {
+            foreach (HouseTask task in dailyTasks)
+            {
+                task.OnTaskCompleted -= HandleTaskCompleted;
+            }
         }
 
         private void HandleTaskCompleted(HouseTask _) => OnTasksUpdated?.Invoke();

@@ -19,6 +19,15 @@ namespace ImbaLife.Gameplay
         [SerializeField] private string optionalTaskId;
         [SerializeField] private TaskBoard taskBoard;
 
+        public void Configure(UtilityType stationType, int energy, int stress, string taskId, TaskBoard board)
+        {
+            type = stationType;
+            energyDelta = energy;
+            stressDelta = stress;
+            optionalTaskId = taskId;
+            taskBoard = board;
+        }
+
         public void Use()
         {
             GameState.Instance.AddEnergy(energyDelta);

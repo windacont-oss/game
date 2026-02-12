@@ -13,6 +13,13 @@ namespace ImbaLife.Gameplay
 
         public string ActionText => actionText;
 
+        public void Configure(string id, int cost, string action)
+        {
+            taskId = id;
+            energyCost = cost;
+            actionText = action;
+        }
+
         public bool TryUse(TaskBoard board)
         {
             if (used || board == null) return false;

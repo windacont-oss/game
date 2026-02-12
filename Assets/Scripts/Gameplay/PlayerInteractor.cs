@@ -6,12 +6,26 @@ namespace ImbaLife.Gameplay
     {
         [SerializeField] private Camera playerCamera;
         [SerializeField] private float interactionDistance = 2.2f;
-        [SerializeField] private LayerMask interactionMask;
+        [SerializeField] private LayerMask interactionMask = ~0;
         [SerializeField] private TaskBoard taskBoard;
+
+        public void Configure(Camera cam, TaskBoard board)
+        {
+            playerCamera = cam;
+            taskBoard = board;
+        }
+
+        private void Awake()
+        {
+            if (playerCamera == null)
+            {
+                playerCamera = Camera.main;
+            }
+        }
 
         private void Update()
         {
-            if (!Input.GetKeyDown(KeyCode.E)) return;
+            if (!Input.GetKeyDown(KeyCode.E) || playerCamera == null) return;
 
             if (Physics.Raycast(
                     playerCamera.transform.position,
@@ -24,6 +38,13 @@ namespace ImbaLife.Gameplay
                 if (interactable != null)
                 {
                     interactable.TryUse(taskBoard);
+                    return;
+                }
+
+                UtilityStation utilityStation = hit.collider.GetComponent<UtilityStation>();
+                if (utilityStation != null)
+                {
+                    utilityStation.Use();
                 }
             }
         }

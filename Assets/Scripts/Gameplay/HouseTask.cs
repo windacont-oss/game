@@ -22,6 +22,18 @@ namespace ImbaLife.Gameplay
 
         public event Action<HouseTask> OnTaskCompleted;
 
+        public static HouseTask Create(string taskId, string taskTitle, string taskDescription, int penalty, int reward)
+        {
+            return new HouseTask
+            {
+                id = taskId,
+                title = taskTitle,
+                description = taskDescription,
+                stressPenalty = penalty,
+                rewardMoney = reward
+            };
+        }
+
         public void Complete()
         {
             if (IsCompleted) return;
