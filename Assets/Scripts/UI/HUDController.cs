@@ -1,20 +1,20 @@
+using System.Reflection;
 using System.Text;
 using ImbaLife.Core;
 using ImbaLife.Gameplay;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace ImbaLife.UI
 {
     public sealed class HUDController : MonoBehaviour
     {
         [SerializeField] private TaskBoard taskBoard;
-        [SerializeField] private Text dayText;
-        [SerializeField] private Text energyText;
-        [SerializeField] private Text stressText;
-        [SerializeField] private Text moneyText;
-        [SerializeField] private Text taskListText;
+        [SerializeField] private Component dayText;
+        [SerializeField] private Component energyText;
+        [SerializeField] private Component stressText;
+        [SerializeField] private Component moneyText;
+        [SerializeField] private Component taskListText;
         [SerializeField] private GameObject gameOverPanel;
 
         private readonly StringBuilder builder = new StringBuilder();
@@ -63,10 +63,10 @@ namespace ImbaLife.UI
             if (taskBoard == null) return;
 
             GameState state = GameState.Instance;
-            dayText.text = $"Day {state.DayNumber} ({state.CurrentPhase})";
-            energyText.text = $"Energy: {state.Energy}";
-            stressText.text = $"Stress: {state.Stress}";
-            moneyText.text = $"Money: {taskBoard.Money}";
+            SetLabelText(dayText, $"Day {state.DayNumber} ({state.CurrentPhase})");
+            SetLabelText(energyText, $"Energy: {state.Energy}");
+            SetLabelText(stressText, $"Stress: {state.Stress}");
+            SetLabelText(moneyText, $"Money: {taskBoard.Money}");
         }
 
         private void RefreshTasks()
@@ -81,14 +81,14 @@ namespace ImbaLife.UI
                 builder.AppendLine($"{status} {task.Title}");
             }
 
-            taskListText.text = builder.ToString();
-            moneyText.text = $"Money: {taskBoard.Money}";
+            SetLabelText(taskListText, builder.ToString());
+            SetLabelText(moneyText, $"Money: {taskBoard.Money}");
         }
 
         private void HandleAllTasksCompleted()
         {
             builder.AppendLine("Все дела закрыты. Можно спокойно отдыхать.");
-            taskListText.text = builder.ToString();
+            SetLabelText(taskListText, builder.ToString());
         }
 
         private void ShowGameOver()
@@ -105,6 +105,24 @@ namespace ImbaLife.UI
         {
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private static void SetLabelText(Component target, string value)
+        {
+            if (target == null) return;
+
+            PropertyInfo textProperty = target.GetType().GetProperty("text");
+            if (textProperty != null && textProperty.PropertyType == typeof(string) && textProperty.CanWrite)
+            {
+                textProperty.SetValue(target, value, null);
+                return;
+            }
+
+            FieldInfo textField = target.GetType().GetField("text");
+            if (textField != null && textField.FieldType == typeof(string))
+            {
+                textField.SetValue(target, value);
+            }
         }
     }
 }
