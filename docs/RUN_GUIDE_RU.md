@@ -23,6 +23,17 @@ bash tools/launch_mod.sh neo_city17
 bash tools/launch_mod.sh neo_city17 --dry-run
 ```
 
+Можно запускать без меню (удобно для проверки):
+
+```bash
+bash tools/launch_mod.sh neo_city17 --mode 1
+```
+
+Где `--mode`:
+- `1` обычный
+- `2` с консолью
+- `3` оконный 1280x720
+
 Что делает скрипт автоматически:
 
 1. Проверяет/создаёт каркас мода
