@@ -1,25 +1,32 @@
 using System.Text;
 using ImbaLife.Core;
 using ImbaLife.Gameplay;
-using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace ImbaLife.UI
 {
     public sealed class HUDController : MonoBehaviour
     {
         [SerializeField] private TaskBoard taskBoard;
-        [SerializeField] private TMP_Text dayText;
-        [SerializeField] private TMP_Text energyText;
-        [SerializeField] private TMP_Text stressText;
-        [SerializeField] private TMP_Text moneyText;
-        [SerializeField] private TMP_Text taskListText;
+        [SerializeField] private Text dayText;
+        [SerializeField] private Text energyText;
+        [SerializeField] private Text stressText;
+        [SerializeField] private Text moneyText;
+        [SerializeField] private Text taskListText;
         [SerializeField] private GameObject gameOverPanel;
 
-        private readonly StringBuilder builder = new();
+        private readonly StringBuilder builder = new StringBuilder();
 
         private void OnEnable()
         {
+            if (GameState.Instance == null)
+            {
+                Debug.LogError("GameState instance is missing in scene.");
+                return;
+            }
+
             GameState.Instance.OnStatsChanged += RefreshStats;
             GameState.Instance.OnPhaseChanged += HandlePhaseChanged;
             GameState.Instance.OnGameOver += ShowGameOver;
@@ -53,6 +60,8 @@ namespace ImbaLife.UI
 
         private void RefreshStats()
         {
+            if (taskBoard == null) return;
+
             GameState state = GameState.Instance;
             dayText.text = $"Day {state.DayNumber} ({state.CurrentPhase})";
             energyText.text = $"Energy: {state.Energy}";
@@ -62,6 +71,8 @@ namespace ImbaLife.UI
 
         private void RefreshTasks()
         {
+            if (taskBoard == null) return;
+
             builder.Clear();
 
             foreach (HouseTask task in taskBoard.Tasks)
@@ -82,15 +93,18 @@ namespace ImbaLife.UI
 
         private void ShowGameOver()
         {
-            gameOverPanel.SetActive(true);
+            if (gameOverPanel != null)
+            {
+                gameOverPanel.SetActive(true);
+            }
+
             Time.timeScale = 0f;
         }
 
         public void RestartScene()
         {
             Time.timeScale = 1f;
-            UnityEngine.SceneManagement.SceneManager.LoadScene(
-                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }

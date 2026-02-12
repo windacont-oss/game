@@ -27,7 +27,7 @@
    - Player + Camera + `PlayerInteractor`.
    - На интерактивные объекты добавь коллайдеры и `InteractableTaskObject` (соответствующий `taskId`).
    - На кровать/холодильник/душ/мусорку добавь `UtilityStation`.
-   - Canvas HUD + `HUDController` + TMP Text поля.
+   - Canvas HUD + `HUDController` + UI Text поля (`Legacy/Text`).
 5. Добавь обе сцены в **Build Settings**.
 
 ## Вайб/арт-направление
