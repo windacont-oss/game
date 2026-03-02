@@ -31,6 +31,15 @@
 6. Назначь эти assets в поля персонажа (`MoveAction`, `LookAction`, `FireAction`).
 7. В `World Settings` выбери `BP_NebulaStrikeGameMode`.
 
+
+## Если появляется ошибка Missing Modules
+
+Если при запуске UE появляется окно **"Missing NebulaStrike Modules"**, открой инструкцию: `Docs/TROUBLESHOOTING_RU.md`.
+
+Коротко: закрой UE, удали `Binaries` + `Intermediate` + `.vs`, сгенерируй project files, собери `Development Editor | Win64` в Visual Studio 2022 и только потом снова открывай `.uproject`.
+
+Также добавлен помощник: `Scripts/rebuild_project_windows.bat`.
+
 ## Что нужно добавить для реально “AAA-ощущения”
 
 - **Контент**: качественные персонажи, окружение, VFX, анимации, звук/музыка.

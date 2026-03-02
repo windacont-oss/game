@@ -1,6 +1,6 @@
 {
   "FileVersion": 3,
-  "EngineAssociation": "5.7",
+  "EngineAssociation": "5.7.3",
   "Category": "Games",
   "Description": "Nebula Strike — high-quality third-person action prototype for Unreal Engine 5.7.3",
   "Modules": [
