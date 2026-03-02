@@ -1,0 +1,26 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.7",
+  "Category": "Games",
+  "Description": "Nebula Strike — high-quality third-person action prototype for Unreal Engine 5.7.3",
+  "Modules": [
+    {
+      "Name": "NebulaStrike",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "EnhancedInput",
+      "Enabled": true
+    },
+    {
+      "Name": "Niagara",
+      "Enabled": true
+    }
+  ],
+  "TargetPlatforms": [
+    "Win64"
+  ]
+}
