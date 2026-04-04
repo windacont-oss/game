@@ -1,0 +1,91 @@
+[gd_scene load_steps=10 format=3 uid="uid://d0qsjlb2mf8tq"]
+
+[ext_resource type="Script" path="res://scripts/Game.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/Hero.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/Enemy.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/Boss.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/HealItem.gd" id="5"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="2"]
+radius = 14.0
+
+[sub_resource type="CircleShape2D" id="3"]
+radius = 26.0
+
+[sub_resource type="CircleShape2D" id="4"]
+radius = 12.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Hero" type="CharacterBody2D" parent="."]
+position = Vector2(138, 347)
+script = ExtResource("2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hero"]
+shape = SubResource("1")
+
+[node name="Enemy1" type="CharacterBody2D" parent="."]
+position = Vector2(617, 209)
+script = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy1"]
+shape = SubResource("2")
+
+[node name="Enemy2" type="CharacterBody2D" parent="."]
+position = Vector2(680, 486)
+script = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy2"]
+shape = SubResource("2")
+
+[node name="Enemy3" type="CharacterBody2D" parent="."]
+position = Vector2(950, 347)
+script = ExtResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy3"]
+shape = SubResource("2")
+
+[node name="Boss" type="CharacterBody2D" parent="."]
+position = Vector2(1141, 355)
+script = ExtResource("4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boss"]
+shape = SubResource("3")
+
+[node name="HealItem" type="Area2D" parent="."]
+position = Vector2(525, 353)
+script = ExtResource("5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HealItem"]
+shape = SubResource("4")
+
+[node name="Camera2D" type="Camera2D" parent="Hero"]
+position = Vector2(0, 0)
+enabled = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HeroHp" type="Label" parent="UI"]
+offset_left = 16.0
+offset_top = 10.0
+offset_right = 358.0
+offset_bottom = 37.0
+text = "HP героя"
+
+[node name="BossHp" type="Label" parent="UI"]
+offset_left = 16.0
+offset_top = 42.0
+offset_right = 358.0
+offset_bottom = 69.0
+text = "HP босса"
+
+[node name="Status" type="Label" parent="UI"]
+offset_left = 16.0
+offset_top = 74.0
+offset_right = 620.0
+offset_bottom = 108.0
+text = "Статус"
